@@ -18,5 +18,5 @@ public class Account {
 
 	private String password;
 
-	private String permission;
+	private Integer permission;
 }
