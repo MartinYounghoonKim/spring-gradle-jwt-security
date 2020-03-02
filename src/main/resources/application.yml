@@ -1,6 +1,6 @@
 spring:
   datasource:
-    data: classpath:data-seeder.sql
+    data: classpath:data.sql
   jpa:
     show-sql: true
     properties:
@@ -10,6 +10,8 @@ spring:
     h2:
       console:
         enabled: true
+  jwt:
+    secret: martintest!@341!#3
 logging:
   level:
     org:
