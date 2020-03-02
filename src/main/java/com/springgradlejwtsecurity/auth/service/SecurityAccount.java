@@ -10,6 +10,6 @@ public class SecurityAccount extends User {
 	public SecurityAccount(Account account) {
 		super(account.getUserId(),
 			"{noop}" + account.getPassword(),
-			AuthorityUtils.createAuthorityList(account.getPermission()));
+			AuthorityUtils.createAuthorityList(account.getPermission().toString()));
 	}
 }
