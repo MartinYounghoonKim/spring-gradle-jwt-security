@@ -13,10 +13,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.*;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -26,6 +23,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @AllArgsConstructor
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+	private final JwtTokenProvider jwtTokenProvider;
 	private UserDetailsService userDetailsService;
 
 	@Override
@@ -39,7 +37,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.antMatchers("/hello").permitAll()
 				.antMatchers("/sign-in").permitAll()
 				.anyRequest().authenticated() // .hasRole("ADMIN")
-			.and().addFilter(new JwtAuthenticationFilter(authenticationManager()));
+			.and().addFilterBefore(new JwtAuthenticationFilter0(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
+//			.and().addFilter(new JwtAuthenticationFilter(authenticationManager()));
 	}
 	@Override
 	public void configure(WebSecurity web) throws Exception {

@@ -4,6 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.springgradlejwtsecurity.auth.entity.Account;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
@@ -26,6 +29,13 @@ public class JwtTokenProvider {
                 .claim(DATA_KEY, account)
                 .signWith(SignatureAlgorithm.HS256, generateKey())
                 .compact();
+    }
+    public Authentication getAuthentication(String token) {
+        UserDetails userDetails = userDetailsService.loadUserByUsername(getUser(token));
+        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+    }
+    public String getUser(String token) {
+        return Jwts.parser().setSigningKey(ENCRYPT_STRING).parseClaimsJws(token).getBody().getSubject();
     }
     private byte[] generateKey(){
         byte[] key = null;
