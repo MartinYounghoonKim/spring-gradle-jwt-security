@@ -1,6 +1,7 @@
 package com.springgradlejwtsecurity.auth.controller;
 
 import com.springgradlejwtsecurity.auth.dto.AuthDto;
+import com.springgradlejwtsecurity.auth.dto.SignUpDto;
 import com.springgradlejwtsecurity.auth.dto.WebResponseDto;
 import com.springgradlejwtsecurity.auth.service.AccountService;
 import lombok.AllArgsConstructor;
@@ -16,8 +17,8 @@ import javax.validation.Valid;
 public class AuthController {
 	final private AccountService accountService;
 	@PostMapping("/sign-up")
-	public WebResponseDto singUp (@RequestBody AuthDto authDto) {
-		accountService.signUp(authDto);
+	public WebResponseDto singUp (@Valid @RequestBody SignUpDto signUpDto) {
+		accountService.signUp(signUpDto);
 		return WebResponseDto.success(null);
 	}
 	@PostMapping("/sign-in")

@@ -2,6 +2,7 @@ package com.springgradlejwtsecurity.auth.service;
 
 import com.springgradlejwtsecurity.auth.configuration.JwtTokenProvider;
 import com.springgradlejwtsecurity.auth.dto.AuthDto;
+import com.springgradlejwtsecurity.auth.dto.SignUpDto;
 import com.springgradlejwtsecurity.auth.entity.Account;
 import com.springgradlejwtsecurity.auth.exception.CustomException;
 import com.springgradlejwtsecurity.auth.repository.AccountRepository;
@@ -23,12 +24,15 @@ public class AccountService {
     private final AccountRepository accountRepository;
 
     @Transactional
-    public Account signUp (AuthDto authDto) {
-        Account account = Account.builder()
-                .userId(authDto.getUserId())
-                .password(passwordEncoder.encode(authDto.getPassword()))
-                .build();
-        return accountRepository.save(account);
+    public void signUp (SignUpDto signUpDto) {
+        boolean isExistedAccountId = Optional.ofNullable(accountRepository.findAccountByUserId(signUpDto.getUserId()))
+                .isPresent();
+
+        if (isExistedAccountId) {
+            throw new CustomException("이미 존재하는 아이디입니다.");
+        }
+        Account account = signUpDto.toEntity();
+        accountRepository.save(account);
     }
 
     @Transactional
