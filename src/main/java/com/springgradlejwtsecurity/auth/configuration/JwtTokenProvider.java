@@ -23,20 +23,23 @@ public class JwtTokenProvider {
     private final UserDetailsService userDetailsService;
 
     public String createToken (Account account) {
+        Claims claims = Jwts.claims().setSubject(account.getUserId());
         return Jwts.builder()
                 .setHeaderParam("typ", "JWT")
                 .setExpiration(new Date(System.currentTimeMillis() + A_HOUR))
+                .setClaims(claims)
                 .claim(DATA_KEY, account)
                 .signWith(SignatureAlgorithm.HS256, generateKey())
                 .compact();
     }
     public Authentication getAuthentication(String token) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(getUser(token));
+        UserDetails userDetails = userDetailsService.loadUserByUsername(getAccountIdByToken(token));
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
-    public String getUser(String token) {
-        return Jwts.parser().setSigningKey(ENCRYPT_STRING).parseClaimsJws(token).getBody().getSubject();
+    public String getAccountIdByToken(String token) {
+        return Jwts.parser().setSigningKey(generateKey()).parseClaimsJws(token).getBody().getSubject();
     }
+
     private byte[] generateKey(){
         byte[] key = null;
         try {

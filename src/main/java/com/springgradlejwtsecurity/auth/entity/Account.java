@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.util.Optional;
 
 @Entity
 @Getter
@@ -28,6 +29,6 @@ public class Account {
 		this.id = id;
 		this.userId = userId;
 		this.password = password;
-		this.permission = permission;
+		this.permission = Optional.ofNullable(permission).orElse(50);
 	}
 }
