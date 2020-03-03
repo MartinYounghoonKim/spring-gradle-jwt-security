@@ -16,8 +16,8 @@ public class AccountDetailService implements UserDetailsService {
 	private final AccountRepository accountRepository;
 
 	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		Account account = Optional.ofNullable(accountRepository.findAccountByUserId(username)).orElseThrow(() -> new RuntimeException("Not found user"));
+	public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
+		Account account = Optional.ofNullable(accountRepository.findAccountByUserId(userId)).orElseThrow(() -> new RuntimeException("Not found user"));
 
 		return new SecurityAccount(account);
 	}

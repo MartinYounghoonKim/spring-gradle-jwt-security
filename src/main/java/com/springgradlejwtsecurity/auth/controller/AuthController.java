@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 @AllArgsConstructor
 @RestController
 public class AuthController {
@@ -18,8 +21,8 @@ public class AuthController {
 		return true;
 	}
 	@PostMapping("/sign-in")
-	public String signIn (@RequestBody AuthDto authDto) {
-		return accountService.signIn(authDto);
+	public String signIn (@RequestBody AuthDto authDto, HttpServletRequest request, HttpServletResponse response) {
+		return accountService.signIn(authDto, request, response);
 	}
 	@GetMapping("/verify")
 	public String Verify () {
