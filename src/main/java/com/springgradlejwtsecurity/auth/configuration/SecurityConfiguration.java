@@ -36,11 +36,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		http.httpBasic().disable() // REST API 이므로 기본 설정은 하지 않음. 기본 설정은 비인증시 로그인폼 화면으로 리다이렉트 된다.
 			.csrf().disable() // CSRF 보안 처리 disabled
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // JWT 토큰 인증이므로, 세션 생성 X
-			.and().authorizeRequests()
-				.antMatchers("/hello").permitAll()
-				.antMatchers("/sign-in", "/sign-up").permitAll()
-				.antMatchers("/hello-admin").hasRole("admin")
-				.antMatchers("/hello-member").hasRole("member")
+			.and().authorizeRequests() // 다음 리퀘스트에 대한 사용권한 체크
+				.antMatchers("/sign-in", "/sign-up", "/hello").permitAll() // 누구나 허용 가능
+//				.antMatchers("/hello-admin").hasRole("100")
+//				.antMatchers("/hello-member").hasRole("50")
+				.antMatchers("/hello-member").hasRole("USER")
+				.antMatchers("/hello-admin").hasRole("ADMIN")
 				.anyRequest().authenticated() // .hasRole("ADMIN")
 //			.and().addFilter(new JwtAuthenticationFilter0(jwtTokenProvider));
 //				.addFilter(new JwtAuthenticationFilter(authenticationManager()))

@@ -22,13 +22,13 @@ public class Account {
 
 	private String password;
 
-	private Integer permission;
+	private String permission;
 
 	@Builder
-	public Account(Long id, String userId, String password, Integer permission) {
+	public Account(Long id, String userId, String password, String permission) {
 		this.id = id;
 		this.userId = userId;
 		this.password = password;
-		this.permission = Optional.ofNullable(permission).orElse(50);
+		this.permission = Optional.ofNullable(permission).orElse("ROLE_USER");
 	}
 }

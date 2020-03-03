@@ -24,6 +24,7 @@ public class JwtTokenProvider {
 
     public String createToken (Account account) {
         Claims claims = Jwts.claims().setSubject(account.getUserId());
+        claims.put("role", account.getPermission());
         return Jwts.builder()
                 .setHeaderParam("typ", "JWT")
                 .setExpiration(new Date(System.currentTimeMillis() + A_HOUR))
