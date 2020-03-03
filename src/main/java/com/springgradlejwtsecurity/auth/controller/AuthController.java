@@ -17,9 +17,9 @@ public class AuthController {
 		accountService.signUp(authDto);
 		return true;
 	}
-	@GetMapping("/sign-in")
-	public String signIn () {
-		return "Sign in";
+	@PostMapping("/sign-in")
+	public String signIn (@RequestBody AuthDto authDto) {
+		return accountService.signIn(authDto);
 	}
 	@GetMapping("/verify")
 	public String Verify () {
