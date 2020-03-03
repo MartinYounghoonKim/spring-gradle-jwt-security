@@ -37,7 +37,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			.csrf().disable() // CSRF 보안 처리 disabled
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // JWT 토큰 인증이므로, 세션 생성 X
 			.and().authorizeRequests() // 다음 리퀘스트에 대한 사용권한 체크
-				.antMatchers("/sign-in", "/sign-up", "/hello").permitAll() // 누구나 허용 가능
+				.antMatchers("/api/v1/auth/sign-in", "/api/v1/auth/sign-up", "/hello").permitAll() // 누구나 허용 가능
 //				.antMatchers("/hello-admin").hasRole("100")
 //				.antMatchers("/hello-member").hasRole("50")
 				.antMatchers("/hello-member").hasRole("USER")
