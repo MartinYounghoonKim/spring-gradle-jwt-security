@@ -6,7 +6,7 @@ import lombok.Getter;
 import javax.validation.constraints.NotNull;
 
 @Getter
-public class SignUpDto {
+public class AuthDto {
     private Long id;
 
     @NotNull(message = "아이디를 입력해주세요.")

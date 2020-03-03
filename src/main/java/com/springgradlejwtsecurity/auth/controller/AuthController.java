@@ -1,6 +1,6 @@
 package com.springgradlejwtsecurity.auth.controller;
 
-import com.springgradlejwtsecurity.auth.dto.SignUpDto;
+import com.springgradlejwtsecurity.auth.dto.AuthDto;
 import com.springgradlejwtsecurity.auth.service.AccountService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 	private AccountService accountService;
 	@PostMapping("/sign-up")
-	public boolean singUp (@RequestBody SignUpDto signUpDto) {
-		accountService.signUp(signUpDto);
+	public boolean singUp (@RequestBody AuthDto authDto) {
+		accountService.signUp(authDto);
 		return true;
 	}
 	@GetMapping("/sign-in")
