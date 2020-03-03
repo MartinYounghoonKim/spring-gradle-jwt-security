@@ -31,7 +31,10 @@ public class AccountService {
         if (isExistedAccountId) {
             throw new CustomException("이미 존재하는 아이디입니다.");
         }
-        Account account = signUpDto.toEntity();
+        Account account = Account.builder()
+                .userId(signUpDto.getUserId())
+                .password(passwordEncoder.encode(signUpDto.getPassword()))
+                .build();
         accountRepository.save(account);
     }
 
