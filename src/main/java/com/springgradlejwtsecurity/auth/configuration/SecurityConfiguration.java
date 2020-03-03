@@ -35,7 +35,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // JWT 토큰 인증이므로, 세션 생성 X
 			.and().authorizeRequests()
 				.antMatchers("/hello").permitAll()
-				.antMatchers("/sign-in").permitAll()
+				.antMatchers("/sign-in", "/sign-up").permitAll()
 				.anyRequest().authenticated() // .hasRole("ADMIN")
 			.and().addFilterBefore(new JwtAuthenticationFilter0(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
 //			.and().addFilter(new JwtAuthenticationFilter(authenticationManager()));

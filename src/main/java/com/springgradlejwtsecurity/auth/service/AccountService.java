@@ -1,24 +1,24 @@
 package com.springgradlejwtsecurity.auth.service;
 
+import com.springgradlejwtsecurity.auth.dto.SignUpDto;
 import com.springgradlejwtsecurity.auth.entity.Account;
 import com.springgradlejwtsecurity.auth.repository.AccountRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
-@Service
 @AllArgsConstructor
-public class AccountService implements UserDetailsService {
-	private final AccountRepository accountRepository;
-
-	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		Account account = Optional.ofNullable(accountRepository.findAccountByUserId(username)).orElseThrow(() -> new RuntimeException("Not found user"));
-
-		return new SecurityAccount(account);
-	}
+@Service
+public class AccountService {
+    private final PasswordEncoder passwordEncoder;
+    private final AccountRepository accountRepository;
+    @Transactional
+    public Account signUp (SignUpDto signUpDto) {
+        Account account = Account.builder()
+                .userId(signUpDto.getUserId())
+                .password(passwordEncoder.encode(signUpDto.getPassword()))
+                .build();
+        return accountRepository.save(account);
+    }
 }
