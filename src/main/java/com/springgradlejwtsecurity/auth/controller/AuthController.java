@@ -12,7 +12,7 @@ import javax.validation.Valid;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("/api/v1/auth")
+@RequestMapping("/api/auth")
 public class AuthController {
 	final private AccountService accountService;
 	@PostMapping("/sign-up")

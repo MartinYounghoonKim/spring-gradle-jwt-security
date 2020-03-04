@@ -1,19 +1,27 @@
 package com.springgradlejwtsecurity.auth.util;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.springgradlejwtsecurity.auth.entity.Account;
+import io.jsonwebtoken.*;
+import lombok.AllArgsConstructor;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.Optional;
 
 @Component
+@AllArgsConstructor
 public class JwtTokenUtils {
-    static private final String ENCRYPT_STRING =  "tutorialJwtSecurity!@#$%%^&&*()";
-    static private final String DATA_KEY = "user";
-    static private long HALF_HOUR = 1000L * 60 * 30;
+    private final UserDetailsService userDetailsService;
+    private final String ENCRYPT_STRING =  "tutorialJwtSecurity!@#$%%^&&*()";
+    private final String DATA_KEY = "user";
+    private final long HALF_HOUR = 1000L * 60 * 30;
 
-    static public String createToken (JwtTokenClaim jwtTokenClaim) {
+    public String createToken (JwtTokenClaim jwtTokenClaim) {
         Claims claims = Jwts.claims().setSubject(jwtTokenClaim.getUserId());
         claims.put("role", jwtTokenClaim.getPermission());
         return Jwts.builder()
@@ -25,8 +33,34 @@ public class JwtTokenUtils {
                 .compact();
 
     }
+    public Authentication getAuthentication(String token) {
+        UserDetails userDetails = userDetailsService.loadUserByUsername(getAccountIdByToken(token));
+        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+    }
+    public String getAccountIdByToken(String token) {
+        return Jwts.parser().setSigningKey(generateEncryptSecretKey()).parseClaimsJws(token).getBody().getSubject();
+    }
+    public boolean verifyToken(String token) {
+        Optional.ofNullable(token)
+                .orElseThrow(() -> new SignatureException("토큰 값은 필수입니다."));
+        try {
+            Jwts.parser().setSigningKey(generateEncryptSecretKey()).parseClaimsJws(token);
 
-    static private byte[] generateEncryptSecretKey(){
+            return true;
+        } catch (Exception e) {
+            throw new RuntimeException("유효하지 않은 토큰입니다.");
+        }
+    }
+    public Jws<Claims> parseToken (String token) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        Jws<Claims> test = Jwts.parser().setSigningKey(generateEncryptSecretKey()).parseClaimsJws(token);
+        Account account = objectMapper.convertValue(test.getBody().get("user"), Account.class);
+        System.out.println(account);
+
+        return test;
+    }
+
+    private byte[] generateEncryptSecretKey(){
         byte[] key = null;
         try {
             key = ENCRYPT_STRING.getBytes("UTF-8");

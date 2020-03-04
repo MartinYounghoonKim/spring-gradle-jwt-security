@@ -1,5 +1,6 @@
 package com.springgradlejwtsecurity.auth.configuration;
 
+import com.springgradlejwtsecurity.auth.util.JwtTokenUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,10 +14,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.*;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -26,7 +24,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @AllArgsConstructor
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
-	private final JwtTokenProvider jwtTokenProvider;
+	private JwtTokenUtils jwtTokenUtils;
 	private UserDetailsService userDetailsService;
 
 	@Override
@@ -37,7 +35,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			.csrf().disable() // CSRF 보안 처리 disabled
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // JWT 토큰 인증이므로, 세션 생성 X
 			.and().authorizeRequests() // 다음 리퀘스트에 대한 사용권한 체크
-				.antMatchers("/api/v1/auth/sign-in", "/api/v1/auth/sign-up", "/hello").permitAll() // 누구나 허용 가능
+				.antMatchers("/api/auth/sign-in", "/api/auth/sign-up", "/hello").permitAll() // 누구나 허용 가능
 //				.antMatchers("/hello-admin").hasRole("100")
 //				.antMatchers("/hello-member").hasRole("50")
 				.antMatchers("/hello-member").hasRole("USER")
@@ -45,7 +43,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.anyRequest().authenticated() // .hasRole("ADMIN")
 //			.and().addFilter(new JwtAuthenticationFilter0(jwtTokenProvider));
 //				.addFilter(new JwtAuthenticationFilter(authenticationManager()))
-			.and().addFilterBefore(new JwtAuthenticationFilter0(jwtTokenProvider), JwtAuthenticationFilter.class);
+			.and().addFilterBefore(new JwtAuthenticationFilter0(jwtTokenUtils), UsernamePasswordAuthenticationFilter.class);  // jwt token 필터를 id/password 인증 필터 전에 넣어라.
 
 //			.and().addFilter();
 	}

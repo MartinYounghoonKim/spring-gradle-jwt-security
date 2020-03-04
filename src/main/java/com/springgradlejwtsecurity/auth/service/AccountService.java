@@ -19,6 +19,7 @@ import java.util.Optional;
 @AllArgsConstructor
 @Service
 public class AccountService {
+    private final JwtTokenUtils jwtTokenUtils;
     private final PasswordEncoder passwordEncoder;
     private final AccountRepository accountRepository;
 
@@ -49,7 +50,7 @@ public class AccountService {
                 .userId(account.getUserId())
                 .permission(account.getPermission())
                 .build();
-        String accessToken = JwtTokenUtils.createToken(jwtTokenClaim);
+        String accessToken = jwtTokenUtils.createToken(jwtTokenClaim);
         setAuthenticationCookie(accessToken, response);
 
         return accessToken;
