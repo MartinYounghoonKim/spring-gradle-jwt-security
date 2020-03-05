@@ -51,3 +51,4 @@ Response information
 ### Reference
 - [https://www.javainuse.com/spring/boot-jwt](https://www.javainuse.com/spring/boot-jwt)
 - [https://daddyprogrammer.org/post/636/springboot2-springsecurity-authentication-authorization/](https://daddyprogrammer.org/post/636/springboot2-springsecurity-authentication-authorization/)
+- [https://velog.io/@tlatldms/Spring-boot-Spring-security-Jwt-1-fvk5hlol8u](https://velog.io/@tlatldms/Spring-boot-Spring-security-Jwt-1-fvk5hlol8u)
