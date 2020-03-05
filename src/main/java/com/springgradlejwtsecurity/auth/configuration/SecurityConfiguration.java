@@ -22,44 +22,27 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @Configuration
 @EnableWebSecurity  // 이 클래스로부터 생성된 객체가 시큐리티 설정 파일임을 의미. 동시에 시큐리티를 사용하는데 필요한 수많은 객체를 생성.
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-@AllArgsConstructor
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
-	private JwtTokenUtils jwtTokenUtils;
-	private UserDetailsService userDetailsService;
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.headers().cacheControl(); // disabled caching
 
 		http.httpBasic().disable() // REST API 이므로 기본 설정은 하지 않음. 기본 설정은 비인증시 로그인폼 화면으로 리다이렉트 된다.
-			.csrf().disable() // CSRF 보안 처리 disabled
+			.csrf().disable() // RESTful 을 이용가히 위해 CSRF 보안 처리 disabled
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // JWT 토큰 인증이므로, 세션 생성 X
 			.and().authorizeRequests() // 다음 리퀘스트에 대한 사용권한 체크
 				.antMatchers("/api/auth/sign-in", "/api/auth/sign-up", "/hello").permitAll() // 누구나 허용 가능
-//				.antMatchers("/hello-admin").hasRole("100")
-//				.antMatchers("/hello-member").hasRole("50")
 				.antMatchers("/hello-member").hasRole("USER")
 				.antMatchers("/hello-admin").hasRole("ADMIN")
 				.anyRequest().authenticated() // .hasRole("ADMIN")
 //			.and().addFilter(new JwtAuthenticationFilter0(jwtTokenProvider));
 //				.addFilter(new JwtAuthenticationFilter(authenticationManager()))
-			.and().addFilterBefore(new JwtAuthenticationFilter0(jwtTokenUtils), UsernamePasswordAuthenticationFilter.class);  // jwt token 필터를 id/password 인증 필터 전에 넣어라.
-
-//			.and().addFilter();
+			.and().addFilterBefore(new JwtAuthenticationFilter0(), UsernamePasswordAuthenticationFilter.class);  // jwt token 필터를 id/password 인증 필터 전에 넣어라.
 	}
 	@Override
 	public void configure(WebSecurity web) throws Exception {
 		web.ignoring().antMatchers("/h2-console/**", "/v1/api-docs", "/swagger-resources/**", "swagger-ui.html", "/webjars/**", "/swagger/**");
-	}
-
-	@Override
-	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(userDetailsService);
-		// auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
-		//        auth.inMemoryAuthentication()
-		//                .withUser("admin")
-		//                .password("password")
-		//                .roles("ADMIN");
 	}
 
 	@Bean
