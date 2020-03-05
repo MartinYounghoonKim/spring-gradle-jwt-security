@@ -1,17 +1,13 @@
 package com.springgradlejwtsecurity.auth.configuration;
 
-import com.springgradlejwtsecurity.auth.util.JwtTokenUtils;
-import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.*;
@@ -38,7 +34,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.anyRequest().authenticated() // .hasRole("ADMIN")
 //			.and().addFilter(new JwtAuthenticationFilter0(jwtTokenProvider));
 //				.addFilter(new JwtAuthenticationFilter(authenticationManager()))
-			.and().addFilterBefore(new JwtAuthenticationFilter0(), UsernamePasswordAuthenticationFilter.class);  // jwt token 필터를 id/password 인증 필터 전에 넣어라.
+			.and().addFilterBefore(new JwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);  // jwt token 필터를 id/password 인증 필터 전에 넣어라.
 	}
 	@Override
 	public void configure(WebSecurity web) throws Exception {

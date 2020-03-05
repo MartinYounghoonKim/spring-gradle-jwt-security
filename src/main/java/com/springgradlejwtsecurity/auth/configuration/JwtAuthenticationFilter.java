@@ -1,56 +1,42 @@
 package com.springgradlejwtsecurity.auth.configuration;
 
-import lombok.Getter;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationServiceException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import com.springgradlejwtsecurity.auth.util.JwtTokenUtils;
+import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.util.WebUtils;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Optional;
 
-@Getter
-public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
-	private final AuthenticationManager authenticationManager;
+/**
+ * @description OncePerRequestFilter
+ * OncePerRequestFilter 은 GenericFilterBean 상속한 클래스로서, filter를 중첩 호출한 경우
+ * 매번 filter 의 내용이 수행되는 것을 방지하기 위해 사용함.
+ *
+ */
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
+    @Autowired
+    private JwtTokenUtils jwtTokenUtils;
 
-	public JwtAuthenticationFilter(AuthenticationManager authenticationManager) {
-		this.authenticationManager = authenticationManager;
-		this.setUsernameParameter("userId");
-		this.setFilterProcessesUrl("/api/v1/auth/verify");
-		this.setPostOnly(true);
-	}
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        Cookie cookie = Optional.ofNullable(WebUtils.getCookie(request, "accessToken"))
+                .orElse(null);
 
-	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-		if (!request.getMethod().equals("POST")) {
-			throw new AuthenticationServiceException("Authentication method not supported : " + request.getMethod());
-		}
-		String userId = Optional.ofNullable(obtainUsername(request)).orElse("").trim();
-		String password = Optional.ofNullable(obtainPassword(request)).orElse("").trim();
-
-		UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(userId, password);
-
-		return this.getAuthenticationManager().authenticate(authRequest);
-	}
-
-	@Override
-	protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws
-		IOException, ServletException {
-		System.out.println(" ========== ");
-		System.out.println(" 실패했드아ㅏㅏㅏㅏ ");
-		System.out.println(" ========== ");
-		response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "teastasdf");
-	}
-
-	@Override
-	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
-		System.out.println(" ========== ");
-		System.out.println(" 성공했드아ㅏㅏㅏㅏ ");
-		System.out.println(" ========== ");
-	}
+        if (cookie != null && jwtTokenUtils.verifyToken(cookie.getValue())) {
+            Authentication authentication = jwtTokenUtils.getAuthentication(cookie.getValue());
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        }
+        filterChain.doFilter(request, response);
+    }
 }
